@@ -1,0 +1,19 @@
+#include "imports/stdlib.fc";
+
+() recv_internal(int my_balance, int msg_value, cell in_msg_full, slice in_msg_body) impure {
+    throw_if(35, in_msg_body.slice_bits() < 32); ;;throws an exception code 35, if the bits of in message is less than 32
+
+    int n = in_msg_body~load_uint(32); ;;reading the integer from body of cell
+
+    slice ds = get_data().begin_parse();
+    int total = ds~load_uint(32);
+
+    set_data(begin_cell().store_uint(total, 64).end_cell()); ;;a new builder is created, then total is stored and builder is closed and cell is formed. set_data stores the cell to persistent storage c4.
+}
+
+int get_total() method_id {
+    slice ds = get_data().begin_parse();
+    int total = ds~load_uint(64);
+
+    return total;
+}
